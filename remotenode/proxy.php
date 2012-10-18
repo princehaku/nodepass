@@ -17,7 +17,7 @@ $curl = curl_init();
 curl_setopt($curl, CURLOPT_URL, $p->url);
 // 设置header显示
 curl_setopt($curl, CURLOPT_HEADER, 1);
-curl_setopt($curl, CURLOPT_FOLLOWLOCATION, 0);
+curl_setopt($curl, CURLOPT_FOLLOWLOCATION, 1);
 if (isset($p_a['user-agent'])) {
     curl_setopt($curl, CURLOPT_USERAGENT, $p_a['user-agent']);
 }
