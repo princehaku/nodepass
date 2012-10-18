@@ -17,7 +17,7 @@ $curl = curl_init();
 curl_setopt($curl, CURLOPT_URL, $p->url);
 // 设置header显示
 curl_setopt($curl, CURLOPT_HEADER, 1);
-curl_setopt($curl, CURLOPT_FOLLOWLOCATION, 1);
+curl_setopt($curl, CURLOPT_FOLLOWLOCATION, 0);
 if (isset($p_a['user-agent'])) {
     curl_setopt($curl, CURLOPT_USERAGENT, $p_a['user-agent']);
 }
@@ -62,8 +62,11 @@ if ($h_pos == -1) {
     die;
 }
 $head_data = substr($data, 0, $h_pos + $ext);
-if (!empty($info["redirect_url"])) {
+preg_match("/Location:(.*)/", $head_data, $match);
+if (isset($match[1])) {
+    $info["redirect_url"] = trim($match[1]);
     header("Location:{$info["redirect_url"]}");
+    die;
 }
 header("Content-Type:{$info['content_type']}");
 // 过滤出set_cookie
