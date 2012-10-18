@@ -2,8 +2,14 @@
 
 $p = json_decode($_POST['p']);
 $p_a = get_object_vars($p);
+
+if (empty($p->url)) {
+    echo "Error Url";
+    die;
+}
+
 if (strpos($p->url, "http://") === false) {
-    echo "错误的请求啊";
+    echo "Error Request";
     die;
 }
 
@@ -56,7 +62,6 @@ if ($h_pos == -1) {
     die;
 }
 $head_data = substr($data, 0, $h_pos + $ext);
-header("{$info['http_code']} OK");
 if (!empty($info["redirect_url"])) {
     header("Location:{$info["redirect_url"]}");
 }

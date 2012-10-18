@@ -4,12 +4,12 @@ var fs = require('fs');
         
 var nodeproxy = {
     httpsOptions : {
-        key: 'test/fixtures/keys/agent2-key.pem',
-        cert: 'test/fixtures/keys/agent2-cert.pem'
+        key: fs.readFileSync('cacert/ca.key.pem'),
+        cert: fs.readFileSync('cacert/ca.cert.pem')
     },
     init : function (){
         this.initHttpProxy();
-    //this.initHttpsProxy();
+        this.initHttpsProxy();
     },
     initHttpProxy : function (){
         var self = this;
@@ -19,10 +19,11 @@ var nodeproxy = {
         console.log('Http Proxy running at port 7070');
     },
     initHttpsProxy : function (){
+        var self = this;
         https.createServer(this.httpsOptions, function (req, res) {
             self.handleRequest(req, res);
         }).listen(8000);
-        console.log('Https Proxy running at port 7070');
+        console.log('Https Proxy running at port 8000');
     },
     handleRequest : function (req, res){
         console.log("Request For " + req.url);
@@ -36,7 +37,7 @@ var nodeproxy = {
         req.on('end', function(chunk) {
             //console.log(req.headers);
             var options = {
-                host: '127.0.0.1',
+                host: '3haku.net',
                 port: 80,
                 path: '/nodepass/remotenode/proxy.php',
                 method: 'POST'
@@ -50,7 +51,7 @@ var nodeproxy = {
                 "Content-length" : postData.length
             };
             var req2 = http.request(options, function(res2) {
-                console.log('STATUS: ' + res2.statusCode);
+                console.log('STATUS: ' + res2.statusCode + " FOR "+ req.url);
                 res.writeHead(res2.statusCode, res2.headers);
                 res2.on('data', function (chunk) {
                     res.write(chunk);
@@ -60,7 +61,7 @@ var nodeproxy = {
                 });
             });
             req2.on('error', function(e) {
-                console.log('problem with request: ' + e.message);
+                console.log('ERROR : '+ req.url + e.message);
             });
             
             if(options.method == 'POST' && postData !=null) {
